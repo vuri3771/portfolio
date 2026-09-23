@@ -50,7 +50,7 @@ export function Hero() {
 
         <motion.h1
           variants={child}
-          className="text-balance text-4xl font-extrabold leading-[1.15] tracking-tight sm:text-5xl md:text-6xl"
+          className="text-balance text-4xl font-extrabold leading-[1.3] tracking-tight sm:text-5xl md:text-6xl"
         >
           {title.split(" ").map((word, i) => (
             <span key={i} className="mr-3 inline-block">
@@ -116,7 +116,7 @@ export function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.2, duration: 0.6 }}
-        className="absolute bottom-8 flex flex-col items-center gap-2 text-muted-foreground"
+        className="absolute bottom-8 flex flex-col items-center gap-2 text-muted-foreground hidden md:block"
       >
         <span className="text-xs">Scroll</span>
         <motion.div
