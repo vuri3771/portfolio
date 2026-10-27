@@ -26,13 +26,14 @@ function stackLayout(w, h) {
     // 정보 글은 시작 높이를 고정해 내용이 길어도 위로 밀려 올라가지 않고 아래로만 늘어남
     // 옆 더미는 화면 가장자리에 살짝 걸쳐 보이게 하고 위아래로 덜 벌려 글과 안 겹치게
     const card = Math.min(w * 0.52, 240)
-    const infoTop = h - 300
+    const infoTop = h - 255
     return {
       card,
       infoTop,
-      centerY: ((150 + infoTop) / 2 / h) * 100,
-      gap: { x: card * 0.92, y: card * 0.22, z: card * 0.5 },
-      step: { x: card * 0.07, y: card * 0.03, z: card * 0.2 },
+      // 화면 한가운데보다 살짝 위, 키가 작은 화면은 정보 글 위로 비켜 올림
+      centerY: (Math.min(h * 0.46, infoTop - card * 0.375 - 40) / h) * 100,
+      gap: { x: card * 0.92, y: card * 0.15, z: card * 0.5 },
+      step: { x: card * 0.07, y: card * 0.02, z: card * 0.2 },
       // 이 칸 수를 넘어간 카드는 흐려지며 사라짐
       visible: 8,
     }
