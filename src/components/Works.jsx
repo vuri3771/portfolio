@@ -51,8 +51,8 @@ function stackLayout(w, h) {
   }
 }
 
-// 처음 들어오면 가운데 카드부터 보여 줘 양옆 더미가 고르게 보이게
-const START = Math.floor((WORKS.length - 1) / 2)
+// 처음 들어오면 한국 원자력 환경 공단 카드부터 보여 줌
+const START = Math.max(0, WORKS.findIndex((w) => w.title.startsWith('한국 원자력 환경 공단')))
 
 const FILTERS = [{ name: null, label: 'all', en: 'all', count: WORKS.length }, ...COMPANIES.map((c) => ({ ...c, label: c.name }))]
 

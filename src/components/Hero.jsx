@@ -3,13 +3,15 @@ import { useEffect, useRef } from 'react'
 // 구름 조각 설정, 위치와 크기는 무대 기준 %
 // depth : back = 먼 산 바로 앞, mid = 중간 숲과 앞 숲 사이, front = 맨 앞
 // 조각마다 흔들림 폭, 속도, 시작점(seed)을 다르게 줘서 서로 다른 방향으로 떠돌게 함
+// 하늘 위 흰 구름은 배경과 섞여 안 보이므로, 진하게 보이는 건 숲 위를 지나는 mid, front 조각
 const CLOUDS = [
-  { depth: 'back', left: -15, top: -8, width: 115, flipX: true, opacity: 0.7, ampX: 16, ampY: 4, speed: 0.07, seed: 1.3 },
-  { depth: 'back', left: 35, top: 8, width: 85, flipY: true, opacity: 0.55, ampX: 20, ampY: 5, speed: 0.055, seed: 4.1 },
-  { depth: 'mid', left: -25, top: 22, width: 90, opacity: 0.5, ampX: 18, ampY: 4, speed: 0.09, seed: 2.7 },
-  { depth: 'mid', left: 45, top: 30, width: 75, flipX: true, flipY: true, opacity: 0.45, ampX: 22, ampY: 5, speed: 0.065, seed: 6.2 },
-  { depth: 'front', left: -30, top: -20, width: 120, opacity: 0.55, ampX: 24, ampY: 6, speed: 0.05, seed: 3.6 },
-  { depth: 'front', left: 30, top: 42, width: 95, flipX: true, opacity: 0.35, ampX: 20, ampY: 4, speed: 0.08, seed: 5.4 },
+  { depth: 'back', left: -15, top: -8, width: 115, flipX: true, opacity: 0.75, ampX: 10, ampY: 5, speed: 0.16, seed: 1.3 },
+  { depth: 'back', left: 35, top: 8, width: 85, flipY: true, opacity: 0.65, ampX: 12, ampY: 6, speed: 0.13, seed: 4.1 },
+  { depth: 'mid', left: -25, top: 24, width: 90, opacity: 0.7, ampX: 12, ampY: 6, speed: 0.19, seed: 2.7 },
+  { depth: 'mid', left: 45, top: 32, width: 75, flipX: true, flipY: true, opacity: 0.65, ampX: 14, ampY: 7, speed: 0.15, seed: 6.2 },
+  { depth: 'front', left: -30, top: -20, width: 120, opacity: 0.6, ampX: 14, ampY: 6, speed: 0.12, seed: 3.6 },
+  { depth: 'front', left: 30, top: 44, width: 95, flipX: true, opacity: 0.6, ampX: 12, ampY: 6, speed: 0.17, seed: 5.4 },
+  { depth: 'front', left: -40, top: 52, width: 80, flipY: true, opacity: 0.5, ampX: 10, ampY: 5, speed: 0.14, seed: 8.8 },
 ]
 
 // 스크롤 끝까지 내렸을 때 층별로 움직이는 양(조각 크기 기준 %)
@@ -20,9 +22,10 @@ const SCROLL_SHIFT = {
   front: { x: 60, y: -28, scale: 0.25 },
 }
 
-// 가만히 있어도 구름이 왼쪽에서 오른쪽으로 흘러감(무대 기준 %/초), 먼 층일수록 느리게
-// 화면 오른쪽 밖으로 다 빠지면 왼쪽 밖에서 다시 들어옴
-const DRIFT = { back: 0.9, mid: 1.3, front: 1.8 }
+// 가만히 있어도 구름이 흘러감(무대 기준 %/초), 먼 층일수록 느리게
+// 중간 층만 반대(오른쪽 → 왼쪽)로 흘러 층끼리 엇갈리며 움직임이 눈에 띄게 함
+// 화면 밖으로 다 빠지면 반대쪽 밖에서 다시 들어옴
+const DRIFT = { back: 1.2, mid: -2.2, front: 3.2 }
 
 // a ~ b 구간에서 0 → 1 로 부드럽게 바뀌는 값
 function ramp(p, a, b) {
@@ -130,9 +133,11 @@ export default function Hero() {
         // x, y 를 서로 다른 seed 로 굴려서 좌우, 위아래, 대각선으로 방향이 계속 바뀜
         const x = flow + wave(t, c.seed) * c.ampX + dir * shift.x * p
         const y = wave(t * 0.8, c.seed + 10) * c.ampY + shift.y * p
-        const s = 1 + wave(t * 0.6, c.seed + 20) * 0.08 + shift.scale * p
-        const o = c.opacity * (0.75 + wave(t * 0.7, c.seed + 30) * 0.25)
-        el.style.transform = `translate3d(${x}%, ${y}%, 0) scale(${s})`
+        // 크기와 기울기가 천천히 부풀었다 가라앉아 구름이 피어오르는 것처럼 보임
+        const s = 1 + wave(t * 0.6, c.seed + 20) * 0.12 + shift.scale * p
+        const r = wave(t * 0.5, c.seed + 40) * 3
+        const o = c.opacity * (0.8 + wave(t * 0.7, c.seed + 30) * 0.2)
+        el.style.transform = `translate3d(${x}%, ${y}%, 0) scale(${s}) rotate(${r}deg)`
         el.style.opacity = o
       })
 
